@@ -11,7 +11,8 @@ int main(){
 	graph.create_graph();
 	graph.get_st_vertex();
 	graph.print_graph();
-	graph.dfs();
 	graph.ford_fulkerson();
+	graph.print_graph();
+
 	return 0;
 }
