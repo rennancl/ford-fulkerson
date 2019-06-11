@@ -9,9 +9,9 @@ int main(){
 	Graph graph(vertex_number, edges_number);
 	graph.read_input();
 	graph.create_graph();
-	graph.get_st_vertex();
 	graph.print_graph();
-	graph.ford_fulkerson();
+	graph.get_st_vertex();
+	graph.print_solution();
 	graph.print_graph();
 
 	return 0;

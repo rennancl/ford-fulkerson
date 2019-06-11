@@ -6,19 +6,23 @@ class Graph{
 		unsigned int edges_number;
 		unsigned int s_vertex;
 		unsigned int t_vertex;
-
-	public:
+    	unsigned int flow = 0; 
 		std::vector<std::vector<int>> edges;
 		std::vector<std::vector<int>> graph_;
 
+	public:
 		Graph(unsigned int, unsigned int);
-		std::vector<std::vector<unsigned int>> dfs();
 		void get_st_vertex(); 
 		void read_input();
-		void ford_fulkerson();
+		void print_solution();
 		void print_graph();
 		void create_graph();
 		void get_min_cut(std::vector<int> cut_set);
+		unsigned int ford_fulkerson();
 		unsigned int update_graph(std::vector<std::vector<unsigned int>> path);
 		std::vector<std::vector<unsigned int>> get_neighbors(unsigned int);
+		std::vector<std::vector<unsigned int>> dfs();
+		std::vector<std::vector<unsigned int>> get_path(std::vector<std::vector<unsigned int>> path);
+		std::vector<unsigned int> get_cut(std::vector<std::vector<unsigned int>> path);
+
 };
