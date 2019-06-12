@@ -80,6 +80,9 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
                 temp_edge.push_back(neighbors[j][0]);
                 temp_edge.push_back(neighbors[j][1]);
                 path.push_back(temp_edge);
+
+                //this modification does not make everything perfect, but it does solve the problem
+                if(neighbors[j][0] == t_vertex) return path;
             }
         }
     }
@@ -95,12 +98,15 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
             break;
         }
     }
+
+
     if(!t_visited){
         return path_;
     }
+
     unsigned int target = t_vertex;
     for(unsigned int i = 0; ; i++){
-        
+    //problema está aqui, if i want to improve the solution, then i need to make it better
         if(i == path.size()) i = 0;
         if(path[i][1] == target){
             path_.push_back(path[i]);
@@ -132,32 +138,14 @@ void Graph::get_st_vertex(){
      
 }
 
-void Graph::get_min_cut(std::vector<int> cut_set){
-    int cut_value;
-
-    std::vector<int> candidates;
-    for(unsigned int i = 0; i < vertex_number; i++){
-        candidates.push_back(0);
-    }
-    
-    for(unsigned int i = 0; i < cut_set.size(); i++){
-        candidates[cut_set[i]] = 1;
-    }
-
-    for(unsigned int i = 0; i < edges_number; i++){
-		std::vector<int> edge = edges[i];
-        if(candidates[edge[0]]) cut_value+= edge[3]; 
-    }
-
-    return;
-}
-
 std::vector<unsigned int> Graph::get_cut(std::vector<std::vector<unsigned int>> path){
     std::vector<unsigned int> cut;
     cut.push_back(s_vertex);
 
     for(unsigned int i = 0;  i < path.size(); i++){
         cut.push_back(path[i][1]);
+
+        //this is not working, i can change it to a set so there wont be duplicates
     }
     return cut;
 }
@@ -169,7 +157,8 @@ unsigned int Graph::update_graph(std::vector<std::vector<unsigned int>> path){
     }
     for(unsigned int i = 0; i < path.size(); i++){
         this->graph_[path[i][0]][path[i][1]] -= min_path_flow;
-    }
+        this->graph_[path[i][1]][path[i][0]] += min_path_flow;
+    }    
     return min_path_flow;
 }
 
@@ -184,10 +173,6 @@ unsigned int Graph::ford_fulkerson(){
 }
 
 void Graph::print_solution(){
-
-    std::cout << "Vertice de source: " << this->s_vertex <<std::endl;
-    std::cout << "Vertice de sink: " << this->t_vertex << std::endl;
-
     unsigned int flow = ford_fulkerson();
     std::vector<unsigned int> cut = get_cut(dfs());
     std::cout << cut.size() << std::endl;

@@ -17,12 +17,11 @@ class Graph{
 		void print_solution();
 		void print_graph();
 		void create_graph();
-		void get_min_cut(std::vector<int> cut_set);
 		unsigned int ford_fulkerson();
 		unsigned int update_graph(std::vector<std::vector<unsigned int>> path);
+		std::vector<unsigned int> get_cut(std::vector<std::vector<unsigned int>> path);
 		std::vector<std::vector<unsigned int>> get_neighbors(unsigned int);
 		std::vector<std::vector<unsigned int>> dfs();
 		std::vector<std::vector<unsigned int>> get_path(std::vector<std::vector<unsigned int>> path);
-		std::vector<unsigned int> get_cut(std::vector<std::vector<unsigned int>> path);
 
 };
