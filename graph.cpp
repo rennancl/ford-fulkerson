@@ -59,13 +59,17 @@ std::vector<std::vector<unsigned int>> Graph::get_neighbors(unsigned int vertex)
 
 std::vector<std::vector<unsigned int>> Graph::dfs(){
     std::vector<bool> visited;
+    std::vector<unsigned int> parent;
+
     std::vector<std::vector<unsigned int>> path;
     std::stack<int> vertex_stack;
     vertex_stack.push(s_vertex);
 
     for(unsigned int i = 0; i < vertex_number; i++){
         visited.push_back(false);
+        parent.push_back(-1);
     }
+    parent[s_vertex] = s_vertex;
 
     while(!vertex_stack.empty()){
         int vertex = vertex_stack.top(); 
@@ -81,7 +85,10 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
                 temp_edge.push_back(neighbors[j][1]);
                 path.push_back(temp_edge);
 
-                //this modification does not make everything perfect, but it does solve the problem
+                parent[neighbors[j][0]] = vertex;
+
+                //this modification does not make everything perfect, but it does solve the problem in some cases
+                //this problem can be solved by adding the parent vector
                 if(neighbors[j][0] == t_vertex) return path;
             }
         }
@@ -89,6 +96,9 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
     return path;
 }
 std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<unsigned int>> path){
+    
+    //theres a problem with this function, its not fiding the path in a good way
+    //i need to solve this, maybe using BFS instead of DFS
     std::vector<std::vector<unsigned int>> path_;
 
     bool t_visited = false;
@@ -104,13 +114,36 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
         return path_;
     }
 
+    for(unsigned int i = 0;  i < path.size(); i++){
+        std::cout << path[i][0] << "-" << path[i][1] << std::endl;
+    }
+    std::cout << "-------------" << std::endl;
     unsigned int target = t_vertex;
+    
+    std::vector<unsigned int> parent;
+    for(unsigned int i = 0; i < vertex_number; i++){
+        parent.push_back(-1);
+    }
+    for(unsigned int i = path.size(); i > 0; i--){
+        parent[path[i-1][1]] = path[i-1][0];
+    }
+    parent[s_vertex] = s_vertex;
+
+    for(unsigned int i = 0; i < vertex_number; i++){
+        std::cout << parent[i] << std::endl;
+    }
+    std::cout << "Source" << s_vertex << std::endl;
+
+    
+    
+    
     for(unsigned int i = 0; ; i++){
-    //problema está aqui, if i want to improve the solution, then i need to make it better
+    //problema está aqui
         if(i == path.size()) i = 0;
         if(path[i][1] == target){
             path_.push_back(path[i]);
             target = path[i][0];
+
             if(path[i][0] == s_vertex) break;
         }
     }
@@ -140,12 +173,18 @@ void Graph::get_st_vertex(){
 
 std::vector<unsigned int> Graph::get_cut(std::vector<std::vector<unsigned int>> path){
     std::vector<unsigned int> cut;
-    cut.push_back(s_vertex);
+    std::vector<bool> visited;
+    for(unsigned int i = 0; i < vertex_number; i++){
+        visited.push_back(false);
+    }
 
+    cut.push_back(s_vertex); //what if i'd use a set?
+    visited[s_vertex] = true;
     for(unsigned int i = 0;  i < path.size(); i++){
-        cut.push_back(path[i][1]);
-
-        //this is not working, i can change it to a set so there wont be duplicates
+        if(!visited[path[i][1]]){
+            cut.push_back(path[i][1]);
+            visited[path[i][1]] = true;
+        }
     }
     return cut;
 }
