@@ -86,9 +86,6 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
                 path.push_back(temp_edge);
 
                 parent[neighbors[j][0]] = vertex;
-
-                //this modification does not make everything perfect, but it does solve the problem in some cases
-                //this problem can be solved by adding the parent vector
                 if(neighbors[j][0] == t_vertex) return path;
             }
         }
@@ -96,57 +93,38 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
     return path;
 }
 std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<unsigned int>> path){
-    
-    //theres a problem with this function, its not fiding the path in a good way
-    //i need to solve this, maybe using BFS instead of DFS
-    std::vector<std::vector<unsigned int>> path_;
-
     bool t_visited = false;
+    unsigned int target = t_vertex;
+    std::vector<std::vector<unsigned int>> path_;
+    std::vector<unsigned int> parent;
+
     for(unsigned int i = 0;  i < path.size(); i++){
         if(path[i][1] == t_vertex){
             t_visited = true;
             break;
         }
     }
-
-
     if(!t_visited){
         return path_;
     }
 
-    for(unsigned int i = 0;  i < path.size(); i++){
-        std::cout << path[i][0] << "-" << path[i][1] << std::endl;
-    }
-    std::cout << "-------------" << std::endl;
-    unsigned int target = t_vertex;
-    
-    std::vector<unsigned int> parent;
     for(unsigned int i = 0; i < vertex_number; i++){
-        parent.push_back(-1);
+        parent.push_back(i);
     }
     for(unsigned int i = path.size(); i > 0; i--){
         parent[path[i-1][1]] = path[i-1][0];
     }
-    parent[s_vertex] = s_vertex;
 
-    for(unsigned int i = 0; i < vertex_number; i++){
-        std::cout << parent[i] << std::endl;
+    for(unsigned int i = 0; i <= vertex_number; i++){
+        std::vector<unsigned int> temp_edge;
+        temp_edge.push_back(parent[target]);
+        temp_edge.push_back(target);
+        temp_edge.push_back(graph_[parent[target]][target]);
+        path_.push_back(temp_edge);
+        target = parent[target];
+        if(parent[target] == s_vertex )break;
     }
-    std::cout << "Source" << s_vertex << std::endl;
 
-    
-    
-    
-    for(unsigned int i = 0; ; i++){
-    //problema está aqui
-        if(i == path.size()) i = 0;
-        if(path[i][1] == target){
-            path_.push_back(path[i]);
-            target = path[i][0];
-
-            if(path[i][0] == s_vertex) break;
-        }
-    }
     return path_;
 }
 
