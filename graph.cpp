@@ -206,12 +206,12 @@ void Graph::get_solution(){
     s_vertex = 0;
     for(unsigned int i = 1; i < vertex_number; i++){
         t_vertex = i;
-        graph = graph_;
+        this->graph = this->graph_;
         flow_ = ford_fulkerson();
-        if(flow_ < this->flow){
+        if(flow_ <= this->flow){
             this->flow = flow_;
             this->cut = get_cut(dfs());
         }
-        graph_ = graph;
+        this->graph_ = this->graph;
     }    
 }
