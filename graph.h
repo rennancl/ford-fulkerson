@@ -6,9 +6,11 @@ class Graph{
 		unsigned int edges_number;
 		unsigned int s_vertex;
 		unsigned int t_vertex;
-    	unsigned int flow = 0; 
+    	unsigned int flow; 
 		std::vector<std::vector<int>> edges;
 		std::vector<std::vector<int>> graph_;
+		std::vector<std::vector<int>> graph;
+		std::vector<unsigned int> cut;
 
 	public:
 		Graph(unsigned int, unsigned int);
@@ -16,6 +18,7 @@ class Graph{
 		void read_input();
 		void print_solution();
 		void print_graph();
+		void get_solution();
 		void create_graph();
 		unsigned int ford_fulkerson();
 		unsigned int update_graph(std::vector<std::vector<unsigned int>> path);

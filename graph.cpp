@@ -3,6 +3,7 @@
 Graph::Graph(unsigned int vertex_number,unsigned  int edges_number){
 	this->edges_number = edges_number;
     this->vertex_number = vertex_number;
+    this->flow = MAXINT;
 }
 
 void Graph::read_input(){
@@ -30,6 +31,9 @@ void Graph::create_graph(){
     for(unsigned int i = 0; i < this->edges.size(); i++){
         std::vector<int> edge = this->edges[i];
         this->graph_[edge[0]][edge[1]] = edge[2];
+//added
+        this->graph_[edge[1]][edge[0]] = edge[2];
+
     }
     return;
 }
@@ -67,7 +71,7 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
 
     for(unsigned int i = 0; i < vertex_number; i++){
         visited.push_back(false);
-        parent.push_back(-1);
+        parent.push_back(i);
     }
     parent[s_vertex] = s_vertex;
 
@@ -97,7 +101,6 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     unsigned int target = t_vertex;
     std::vector<std::vector<unsigned int>> path_;
     std::vector<unsigned int> parent;
-
     for(unsigned int i = 0;  i < path.size(); i++){
         if(path[i][1] == t_vertex){
             t_visited = true;
@@ -190,12 +193,25 @@ unsigned int Graph::ford_fulkerson(){
 }
 
 void Graph::print_solution(){
-    unsigned int flow = ford_fulkerson();
-    std::vector<unsigned int> cut = get_cut(dfs());
-    std::cout << cut.size() << std::endl;
-    for(unsigned i = 0; i < cut.size(); i++){
-        std::cout << cut[i] << " ";
+    std::cout << this->cut.size() << std::endl;
+    for(unsigned i = 0; i < this->cut.size(); i++){
+        std::cout << this->cut[i] << " ";
     }
     std::cout << std::endl;
-    std::cout << flow << std::endl;
+    std::cout << this->flow << std::endl;
+}
+
+void Graph::get_solution(){
+    unsigned int flow_ = 0;
+    s_vertex = 0;
+    for(unsigned int i = 1; i < vertex_number; i++){
+        t_vertex = i;
+        graph = graph_;
+        flow_ = ford_fulkerson();
+        if(flow_ < this->flow){
+            this->flow = flow_;
+            this->cut = get_cut(dfs());
+        }
+        graph_ = graph;
+    }    
 }
