@@ -8,15 +8,15 @@ class Graph{
 		unsigned int t_vertex;
     	unsigned int flow; 
 		std::vector<std::vector<int>> edges;
-		std::vector<std::vector<int>> graph_;
-		std::vector<std::vector<int>> graph_aux;
-		std::vector<std::vector<int>> graph_res;
+		// std::vector<std::vector<int>> graph_;
+		int **graph_;
+		int **graph_aux;
+		// std::vector<std::vector<int>> graph_aux;
 
 		std::vector<unsigned int> cut;
 
 	public:
 		Graph(unsigned int, unsigned int);
-		void get_st_vertex(); 
 		void read_input();
 		void print_solution();
 		void print_graph();
@@ -25,7 +25,6 @@ class Graph{
 		unsigned int ford_fulkerson();
 		unsigned int update_graph(std::vector<std::vector<unsigned int>> path);
 		std::vector<unsigned int> get_cut(std::vector<std::vector<unsigned int>> path);
-		std::vector<std::vector<unsigned int>> get_neighbors(unsigned int);
 		std::vector<std::vector<unsigned int>> dfs();
 		std::vector<std::vector<unsigned int>> get_path(std::vector<std::vector<unsigned int>> path);
 

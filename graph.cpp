@@ -4,15 +4,28 @@ Graph::Graph(unsigned int vertex_number,unsigned  int edges_number){
 	this->edges_number = edges_number;
     this->vertex_number = vertex_number;
     this->flow = MAXINT;
+
+    this->graph_ = (int**) malloc(sizeof(int*)* vertex_number);
+    for(unsigned  int i = 0; i < vertex_number; i++){
+        this->graph_[i] = (int*) malloc(sizeof(int)* vertex_number);
+    }
+
+    this->graph_aux = (int**) malloc(sizeof(int*)* vertex_number);
+    for(unsigned int i = 0; i < vertex_number; i++){
+        this->graph_aux[i] = (int*) malloc(sizeof(int)* vertex_number);
+    }
 }
 
 void Graph::read_input(){
+    std::vector<int> edge;
+    int value;
+    edge.push_back(0);
+    edge.push_back(0);
+    edge.push_back(0);
     for(unsigned int i = 0; i < edges_number; i++){
-		std::vector<int> edge;
-		int value;
 		for(unsigned int j = 0; j < 3; j++){
 			std::cin >> value;
-			edge.push_back(value);
+			edge[j] = value;
 		}
 		this->edges.push_back(edge);
 	}
@@ -20,22 +33,22 @@ void Graph::read_input(){
 }
 
 void Graph::create_graph(){
-    for(unsigned int i = 0; i < vertex_number; i++){
-        std::vector<int> neighbors;
-        for(unsigned int j = 0; j < vertex_number; j++){
-            neighbors.push_back(0);
-        }
-        this->graph_.push_back(neighbors);
-    }
+    // std::vector<int> neighbors;
+    // for(unsigned int j = 0; j < vertex_number; j++){
+    //     neighbors.push_back(0);
+    // }
+    
+    // for(unsigned int i = 0; i < vertex_number; i++){
+    //     this->graph_.push_back(neighbors);
+    // }
 
     for(unsigned int i = 0; i < this->edges.size(); i++){
-        std::vector<int> edge = this->edges[i];
-        this->graph_[edge[0]][edge[1]] = edge[2];
-        this->graph_[edge[1]][edge[0]] = edge[2];
+        this->graph_[this->edges[i][0]][this->edges[i][1]] = this->edges[i][2];
+        this->graph_[this->edges[i][1]][this->edges[i][0]] = this->edges[i][2];
+        this->graph_aux[this->edges[i][0]][this->edges[i][1]] = this->edges[i][2];
+        this->graph_aux[this->edges[i][1]][this->edges[i][0]] = this->edges[i][2];
 
     }
-    this->graph_res = this->graph_;
-
     return;
 }
 
@@ -49,19 +62,6 @@ void Graph::print_graph(){
     return;
 }
 
-std::vector<std::vector<unsigned int>> Graph::get_neighbors(unsigned int vertex){
-    std::vector<std::vector<unsigned int>> neighbors;
-    for(unsigned int j = 0; j < vertex_number; j++){
-        if(this->graph_[vertex][j] > 0){
-            std::vector<unsigned int> temp_edge;
-            temp_edge.push_back(j);
-            temp_edge.push_back(this->graph_[vertex][j]);
-            neighbors.push_back(temp_edge);
-        }
-    }
-    return neighbors;
-}
-
 std::vector<std::vector<unsigned int>> Graph::dfs(){
     std::vector<bool> visited;
     std::vector<unsigned int> parent;
@@ -69,29 +69,34 @@ std::vector<std::vector<unsigned int>> Graph::dfs(){
     std::vector<std::vector<unsigned int>> path;
     std::stack<int> vertex_stack;
     vertex_stack.push(s_vertex);
-
+    int vertex;
+    
     for(unsigned int i = 0; i < vertex_number; i++){
         visited.push_back(false);
         parent.push_back(i);
     }
     parent[s_vertex] = s_vertex;
 
+
+    std::vector<unsigned int> temp_edge;
+    temp_edge.push_back(0);
+    temp_edge.push_back(0);
+    temp_edge.push_back(0);
+
     while(!vertex_stack.empty()){
-        int vertex = vertex_stack.top(); 
+        vertex = vertex_stack.top(); 
         vertex_stack.pop();
-        if(!visited[vertex]){
-            visited[vertex] = true;
-            std::vector<std::vector<unsigned int>> neighbors = this->get_neighbors(vertex);
-            for(unsigned int j = 0; j < neighbors.size(); j++){
-                vertex_stack.push(neighbors[j][0]);
-                std::vector<unsigned int> temp_edge;
-                temp_edge.push_back(vertex);
-                temp_edge.push_back(neighbors[j][0]);
-                temp_edge.push_back(neighbors[j][1]);
+        for(unsigned int j = 0; j < vertex_number; j++){
+            if(this->graph_[vertex][j] > 0 and !visited[j]){
+                visited[j] = true;
+                vertex_stack.push(j);
+                temp_edge[0] = vertex;
+                temp_edge[1] = j;
+                temp_edge[2] = graph_[vertex][j];
                 path.push_back(temp_edge);
 
-                parent[neighbors[j][0]] = vertex;
-                if(neighbors[j][0] == t_vertex) return path;
+                parent[j] = vertex;
+                if(j == t_vertex) return path;
             }
         }
     }
@@ -102,6 +107,10 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     unsigned int target = t_vertex;
     std::vector<std::vector<unsigned int>> path_;
     std::vector<unsigned int> parent;
+    std::vector<unsigned int> temp_edge;
+    temp_edge.push_back(0);
+    temp_edge.push_back(0);
+    temp_edge.push_back(0);
 
     // for(unsigned int i = 0; i < path.size(); i++){
     //     std::cout << path[i][0] << "-" << path[i][1] << std::endl;
@@ -127,10 +136,9 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     parent[s_vertex] = s_vertex;
 
     for(unsigned int i = 0; i <= vertex_number; i++){
-        std::vector<unsigned int> temp_edge;
-        temp_edge.push_back(parent[target]);
-        temp_edge.push_back(target);
-        temp_edge.push_back(graph_[parent[target]][target]);
+        temp_edge[0] = parent[target];
+        temp_edge[1] = target;
+        temp_edge[2] = graph_[parent[target]][target];
         path_.push_back(temp_edge);
         if(parent[target] == s_vertex )break;
         target = parent[target];
@@ -146,26 +154,7 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     return path_;
 }
 
-void Graph::get_st_vertex(){
-    //essa função será responsável também por realizar a futura modelagem do problema
-    std::vector<int> s_candidates, t_candidates;
-    for(unsigned int i = 0; i < vertex_number; i++){
-        t_candidates.push_back(1);
-        s_candidates.push_back(1);
-    }
 
-    for(unsigned int i = 0; i < edges_number; i++){
-		std::vector<int> edge = edges[i];
-        t_candidates[edge[0]] = 0; 
-        s_candidates[edge[1]] = 0;
-    }
-
-    for(unsigned int i = 0; i < vertex_number; i++){
-        if(t_candidates[i]) this->t_vertex = i;
-        if(s_candidates[i]) this->s_vertex = i;
-    }
-     
-}
 
 std::vector<unsigned int> Graph::get_cut(std::vector<std::vector<unsigned int>> path){
     std::vector<unsigned int> cut;
@@ -174,7 +163,7 @@ std::vector<unsigned int> Graph::get_cut(std::vector<std::vector<unsigned int>> 
         visited.push_back(false);
     }
 
-    cut.push_back(s_vertex); //what if i'd use a set?
+    cut.push_back(s_vertex);
     visited[s_vertex] = true;
     for(unsigned int i = 0;  i < path.size(); i++){
         if(!visited[path[i][1]]){
@@ -199,8 +188,9 @@ unsigned int Graph::update_graph(std::vector<std::vector<unsigned int>> path){
 
 unsigned int Graph::ford_fulkerson(){
     unsigned int flow = 0; 
+    std::vector<std::vector<unsigned int>> path;
     while(1){
-        std::vector<std::vector<unsigned int>> path = get_path(dfs());
+        path = get_path(dfs());
         if(path.empty()) break; //enquanto há caminho
         flow += update_graph(path); //incrementa o fluxo
     }
@@ -221,13 +211,16 @@ void Graph::get_solution(){
     s_vertex = 0;
     for(unsigned int i = 1; i < vertex_number; i++){
         t_vertex = i;
-        // std::cout << t_vertex  << std::endl;
-        this->graph_aux = this->graph_;
         flow_ = ford_fulkerson();
-        if(flow_ <= this->flow){
+        if(flow_ < this->flow){
             this->flow = flow_;
             this->cut = get_cut(dfs());
         }
-        this->graph_ = this->graph_aux;
+
+    for(unsigned int i = 0; i < vertex_number; i++){
+        for(unsigned int j = 0; j < vertex_number; j++){
+                this->graph_[i][j] = this->graph_aux[i][j];
+            }
+        }
     }    
 }
