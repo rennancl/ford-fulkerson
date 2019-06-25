@@ -9,7 +9,9 @@ class Graph{
     	unsigned int flow; 
 		std::vector<std::vector<int>> edges;
 		std::vector<std::vector<int>> graph_;
-		std::vector<std::vector<int>> graph;
+		std::vector<std::vector<int>> graph_aux;
+		std::vector<std::vector<int>> graph_res;
+
 		std::vector<unsigned int> cut;
 
 	public:

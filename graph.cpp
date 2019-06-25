@@ -31,10 +31,11 @@ void Graph::create_graph(){
     for(unsigned int i = 0; i < this->edges.size(); i++){
         std::vector<int> edge = this->edges[i];
         this->graph_[edge[0]][edge[1]] = edge[2];
-//added
         this->graph_[edge[1]][edge[0]] = edge[2];
 
     }
+    this->graph_res = this->graph_;
+
     return;
 }
 
@@ -101,6 +102,12 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     unsigned int target = t_vertex;
     std::vector<std::vector<unsigned int>> path_;
     std::vector<unsigned int> parent;
+
+    // for(unsigned int i = 0; i < path.size(); i++){
+    //     std::cout << path[i][0] << "-" << path[i][1] << std::endl;
+    // }
+    // std::cout << "CANDIDATOS" << std::endl;
+
     for(unsigned int i = 0;  i < path.size(); i++){
         if(path[i][1] == t_vertex){
             t_visited = true;
@@ -117,6 +124,7 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     for(unsigned int i = path.size(); i > 0; i--){
         parent[path[i-1][1]] = path[i-1][0];
     }
+    parent[s_vertex] = s_vertex;
 
     for(unsigned int i = 0; i <= vertex_number; i++){
         std::vector<unsigned int> temp_edge;
@@ -124,9 +132,16 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
         temp_edge.push_back(target);
         temp_edge.push_back(graph_[parent[target]][target]);
         path_.push_back(temp_edge);
-        target = parent[target];
         if(parent[target] == s_vertex )break;
+        target = parent[target];
+
     }
+
+
+    // for(unsigned int i = 0; i < path_.size(); i++){
+    //     std::cout << path_[i][0] << "-" << path_[i][1] << std::endl;
+    // }
+    // std::cout << "FIM CAMINHO" << std::endl;
 
     return path_;
 }
@@ -206,12 +221,13 @@ void Graph::get_solution(){
     s_vertex = 0;
     for(unsigned int i = 1; i < vertex_number; i++){
         t_vertex = i;
-        this->graph = this->graph_;
+        // std::cout << t_vertex  << std::endl;
+        this->graph_aux = this->graph_;
         flow_ = ford_fulkerson();
         if(flow_ <= this->flow){
             this->flow = flow_;
             this->cut = get_cut(dfs());
         }
-        this->graph_ = this->graph;
+        this->graph_ = this->graph_aux;
     }    
 }
