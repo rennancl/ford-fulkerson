@@ -6,12 +6,10 @@ class Graph{
 		unsigned int edges_number;
 		unsigned int s_vertex;
 		unsigned int t_vertex;
-    	unsigned int flow; 
+	    	unsigned int flow; 
 		std::vector<std::vector<int>> edges;
-		// std::vector<std::vector<int>> graph_;
 		int **graph_;
 		int **graph_aux;
-		// std::vector<std::vector<int>> graph_aux;
 
 		std::vector<unsigned int> cut;
 

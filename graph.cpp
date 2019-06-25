@@ -33,15 +33,6 @@ void Graph::read_input(){
 }
 
 void Graph::create_graph(){
-    // std::vector<int> neighbors;
-    // for(unsigned int j = 0; j < vertex_number; j++){
-    //     neighbors.push_back(0);
-    // }
-    
-    // for(unsigned int i = 0; i < vertex_number; i++){
-    //     this->graph_.push_back(neighbors);
-    // }
-
     for(unsigned int i = 0; i < this->edges.size(); i++){
         this->graph_[this->edges[i][0]][this->edges[i][1]] = this->edges[i][2];
         this->graph_[this->edges[i][1]][this->edges[i][0]] = this->edges[i][2];
@@ -111,12 +102,6 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
     temp_edge.push_back(0);
     temp_edge.push_back(0);
     temp_edge.push_back(0);
-
-    // for(unsigned int i = 0; i < path.size(); i++){
-    //     std::cout << path[i][0] << "-" << path[i][1] << std::endl;
-    // }
-    // std::cout << "CANDIDATOS" << std::endl;
-
     for(unsigned int i = 0;  i < path.size(); i++){
         if(path[i][1] == t_vertex){
             t_visited = true;
@@ -144,15 +129,9 @@ std::vector<std::vector<unsigned int>> Graph::get_path(std::vector<std::vector<u
         target = parent[target];
 
     }
-
-
-    // for(unsigned int i = 0; i < path_.size(); i++){
-    //     std::cout << path_[i][0] << "-" << path_[i][1] << std::endl;
-    // }
-    // std::cout << "FIM CAMINHO" << std::endl;
-
     return path_;
 }
+
 
 
 
